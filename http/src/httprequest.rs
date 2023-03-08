@@ -4,7 +4,7 @@ use std::collections::HashMap;
 pub enum Resourse {
     Path(String),
 }
-
+#[derive(Debug)]
 pub struct HttpRequest {
     pub method: Method,
     pub version: Version,
@@ -12,6 +12,33 @@ pub struct HttpRequest {
     pub header: HashMap<String, String>,
     pub msg_body: String,
 }
+
+impl From<String> for HttpRequest {
+    fn from(req: String) -> HttpRequest {
+        let mut parsed_method = Method::Uninitialized;
+        let mut parsed_version = Version::V1_1;
+        let mut parsed_resourse = Resourse::Path("".to_string());
+        let mut parsed_headers = HashMap::new();
+        let mut parsed_msg_body = "";
+
+        for line in req.lines() {
+            if line.contains("HTTP") {
+                let (method, resourse, version) = process_req_line(line);
+            }
+        }
+
+        HttpRequest {
+            method: parsed_method,
+            version: parsed_version,
+            resourse: parsed_resourse,
+            header: parsed_headers,
+            msg_body: parsed_msg_body.to_string(),
+        }
+    }
+}
+
+fn process_req_line(s: &str) -> (Method, Resourse, Version) {}
+fn process_header_line(s: &str) -> (String, String) {}
 
 #[derive(Debug, PartialEq)]
 pub enum Method {
