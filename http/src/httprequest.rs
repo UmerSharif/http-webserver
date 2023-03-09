@@ -24,6 +24,15 @@ impl From<String> for HttpRequest {
         for line in req.lines() {
             if line.contains("HTTP") {
                 let (method, resourse, version) = process_req_line(line);
+                parsed_method = method;
+                parsed_version = version;
+                parsed_resourse = resourse;
+            } else if line.contains(":") {
+                let (key, value) = process_header_line(line);
+                parsed_headers.insert(key, value);
+            } else if line.len() == 0 {
+            } else {
+                parsed_msg_body = line;
             }
         }
 
@@ -37,8 +46,33 @@ impl From<String> for HttpRequest {
     }
 }
 
-fn process_req_line(s: &str) -> (Method, Resourse, Version) {}
-fn process_header_line(s: &str) -> (String, String) {}
+fn process_req_line(s: &str) -> (Method, Resourse, Version) {
+    let mut words = s.split_whitespace();
+    let method = words.next().unwrap();
+    let resourse = words.next().unwrap();
+    let version = words.next().unwrap();
+
+    (
+        method.into(),
+        Resourse::Path(resourse.to_string()),
+        version.into(),
+    )
+}
+
+fn process_header_line(s: &str) -> (String, String) {
+    let mut header_items = s.split(":");
+    let mut key = String::from("");
+    let mut value = String::from("");
+
+    if let Some(k) = header_items.next() {
+        key = k.to_string();
+    }
+    if let Some(v) = header_items.next() {
+        value = v.to_string()
+    }
+
+    (key, value)
+}
 
 #[derive(Debug, PartialEq)]
 pub enum Method {
