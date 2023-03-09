@@ -35,7 +35,6 @@ impl From<String> for HttpRequest {
                 parsed_msg_body = line;
             }
         }
-
         HttpRequest {
             method: parsed_method,
             version: parsed_version,
