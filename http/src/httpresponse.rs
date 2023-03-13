@@ -56,4 +56,30 @@ impl<'a> HttpResponse<'a> {
         let _ = write!(write_stream, "{}", response_string);
         Ok(())
     }
+
+    //getters for httpresponse struct
+
+    fn version(&self) -> &str {
+        self.version
+    }
+    fn status_code(&self) -> &str {
+        self.status_code
+    }
+    fn status_text(&self) -> &str {
+        self.status_text
+    }
+    fn header(&self) -> String {
+        let map = self.header.clone().unwrap();
+        let mut header_string = "".into();
+        for (k, v) in map.iter() {
+            header_string = format!("{}{}:{}\r\n", header_string, k, v);
+        }
+        header_string
+    }
+    fn body(&self) -> &str {
+        match &self.body {
+            Some(b) => b.as_str(),
+            None => "",
+        }
+    }
 }
