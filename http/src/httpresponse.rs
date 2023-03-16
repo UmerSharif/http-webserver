@@ -38,7 +38,7 @@ impl<'a> From<HttpResponse<'a>> for String {
 }
 
 impl<'a> HttpResponse<'a> {
-    fn new(
+    pub fn new(
         status_code: &'a str,
         header: Option<HashMap<&'a str, &'a str>>,
         body: Option<String>,
