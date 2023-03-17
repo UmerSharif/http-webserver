@@ -58,3 +58,33 @@ impl Handler for StaticPageHandler {
         }
     }
 }
+
+impl WebServiceHandler {
+    fn load_json() -> Vec<OrderStatus> {
+        let default_path = format!("{}/data", env!("CARGO_MANIFEST_DIR"));
+        let data_path = env::var("DATA_PATH").unwrap_or(default_path);
+        let full_path = format!("{}/{}", data_path, "orders.json");
+        let json_contents = fs::read_to_string(full_path);
+        let orders: Vec<OrderStatus> =
+            serde_json::from_str(json_contents.unwrap().as_str()).unwrap();
+        orders
+    }
+}
+
+impl Handler for WebServiceHandler {
+    fn handle(req: &HttpRequest) -> HttpResponse {
+        let http::httprequest::Resourse::Path(s) = req.resourse;
+
+        let route: Vec<&str> = s.split("/").collect();
+        match route[2] {
+            "shipping" if route.len() > 2 && route[3] == "orders" => {
+                let body = Some(serde_json::to_string(&Self::load_json()).unwrap());
+
+                let mut header: HashMap<&str, &str> = HashMap::new();
+                header.insert("Content-Type", "applocation/json");
+                HttpResponse::new("200", Some(header), body)
+            }
+            _ => HttpResponse::new("404", None, Self::load_file("404.html")),
+        }
+    }
+}

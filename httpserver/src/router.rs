@@ -5,6 +5,8 @@ use http::{
     httpresponse::HttpResponse,
 };
 
+use crate::handler::{Handler, PageNotFoundHandler, StaticPageHandler};
+
 pub struct Router;
 
 impl Router {
