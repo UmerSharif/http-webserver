@@ -5,14 +5,14 @@ use http::{
     httpresponse::HttpResponse,
 };
 
-use crate::handler::{Handler, PageNotFoundHandler, StaticPageHandler};
+use crate::handler::{Handler, PageNotFoundHandler, StaticPageHandler, WebServiceHandler};
 
 pub struct Router;
 
 impl Router {
     pub fn route(req: HttpRequest, stream: &mut impl Write) {
         match req.method {
-            httprequest::Method::Get => match req.resourse {
+            httprequest::Method::Get => match &req.resourse {
                 httprequest::Resourse::Path(s) => {
                     let route: Vec<&str> = s.split("/").collect();
                     match route[1] {

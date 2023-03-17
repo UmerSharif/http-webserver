@@ -16,10 +16,10 @@ pub trait Handler {
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 
 pub struct OrderStatus {
-    ordrer_id: i32,
+    order_id: i32,
     order_date: String,
     order_status: String,
 }
@@ -29,7 +29,7 @@ pub struct PageNotFoundHandler;
 pub struct WebServiceHandler;
 
 impl Handler for PageNotFoundHandler {
-    fn handle(req: &HttpRequest) -> HttpResponse {
+    fn handle(_req: &HttpRequest) -> HttpResponse {
         HttpResponse::new("404", None, Self::load_file("404.html"))
     }
 }
@@ -39,7 +39,7 @@ impl Handler for StaticPageHandler {
         let http::httprequest::Resourse::Path(s) = &req.resourse;
         let route: Vec<&str> = s.split("/").collect();
         match route[1] {
-            "" => HttpResponse::new("200", None, Self::load_file("inded.html")),
+            "" => HttpResponse::new("200", None, Self::load_file("index.html")),
             "health" => HttpResponse::new("200", None, Self::load_file("health.html")),
             path => match Self::load_file(path) {
                 Some(contents) => {
@@ -73,7 +73,7 @@ impl WebServiceHandler {
 
 impl Handler for WebServiceHandler {
     fn handle(req: &HttpRequest) -> HttpResponse {
-        let http::httprequest::Resourse::Path(s) = req.resourse;
+        let http::httprequest::Resourse::Path(s) = &req.resourse;
 
         let route: Vec<&str> = s.split("/").collect();
         match route[2] {
